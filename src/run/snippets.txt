@@ -1,0 +1,5 @@
+flask --app app.py --debug run
+
+pip install passlib
+
+pip install pymongo
