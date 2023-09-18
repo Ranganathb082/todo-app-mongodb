@@ -63,7 +63,7 @@ def list_dbs():
     # collections = db.list_collection_names()
 
     return jsonify(databases=databases)
-
+    
 
 @app.route('/collections', methods=['GET'])
 def list_collections():
@@ -74,13 +74,26 @@ def list_collections():
 
 
 @app.route('/insert/<collection_name>', methods=['POST'])
-def insert_data(collection_name):
+def insert_data(collection_name): 
     data = request.get_json()  # Assuming the data is sent as JSON in the request body
 
     # Insert the data into the specified collection
     result = db[collection_name].insert_one(data)
 
     return jsonify(inserted_id=str(result.inserted_id))
+
+
+@app.route('/update/<collection_name>/<document_id>', methods=['PUT'])
+def update_document(collection_name, document_id):
+    data = request.get_json()
+
+    # Update the document in the specified collection
+    result = db[collection_name].update_one({'_id': document_id}, {'$set': data})
+
+    if result.matched_count == 1:
+        return jsonify(message='Document updated successfully')
+    else:
+        return jsonify(message='Document not found or update failed'), 404
 
 
 if __name__ == '__main__':
