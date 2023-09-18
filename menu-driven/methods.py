@@ -1,17 +1,17 @@
 from conn import client
 import json
 
-def list_dbs():
+# def list_dbs():
 
-    print("\nDatabases are : ")
-    databases = client.list_database_names()
-    for database in databases:
-        print(database)
-    print()
+#     print("\nDatabases are : ")
+#     databases = client.list_database_names()
+#     for database in databases:
+#         print(database)
+#     print()
 
 def switch_database():
     
-    list_dbs()
+    # list_dbs()
     global database_name
     database_name = input("\nEnter the Database name : ")
 
@@ -20,24 +20,24 @@ def switch_database():
     print(f"Switched to {database_name} database\n")
 
 
-def present_database():
-    try:
-        print(f"Presently working in {db.name} database")
-    except:
-        print("No present Working database! Swicth to the database\n")
+# def present_database():
+#     try:
+#         print(f"Presently working in {db.name} database")
+#     except:
+#         print("No present Working database! Swicth to the database\n")
 
 
 
-def list_collections():
+# def list_collections():
 
-    print("\nCollections are : ")
-    collections = db.list_collection_names()
-    if len(collections)>0:
-        for collection in collections:
-            print(collection)
-    else:
-        print(f"No collections are there in the database {database_name}")
-    print()
+#     print("\nCollections are : ")
+#     collections = db.list_collection_names()
+#     if len(collections)>0:
+#         for collection in collections:
+#             print(collection)
+#     else:
+#         print(f"No collections are there in the database {database_name}")
+#     print()
 
 def crate_colletion():
     collection_name = input("\nEnter the collection name : ")
@@ -55,16 +55,16 @@ def drop_collection():
 
 
 
-def rename_collection():
-    try:
-        current_collection_name = input("Enter the existing collection name : ")
-        new_collection_name = input("Enter the new collection name(to renmae) : ")
+# def rename_collection():
+#     try:
+#         current_collection_name = input("Enter the existing collection name : ")
+#         new_collection_name = input("Enter the new collection name(to renmae) : ")
 
-        db[current_collection_name].rename(new_collection_name)
+#         db[current_collection_name].rename(new_collection_name)
 
-        print(f'Collection "{current_collection_name}" renamed to "{new_collection_name}" successfully.')
-    except:
-        print(f"Collection named {new_collection_name} already present\n")
+#         print(f'Collection "{current_collection_name}" renamed to "{new_collection_name}" successfully.')
+#     except:
+#         print(f"Collection named {new_collection_name} already present\n")
 
 def ask_data_type(key):
     print(f"Enter the type value for {key} : ")
@@ -122,6 +122,58 @@ def insert_data():
     inserted_document = collection.insert_one(result)
     print(f"Inserted document ID: {inserted_document.inserted_id}\n")
 
+def update_data():
+    collection_name = input("Enter the Collection name : ")
+    collection = db[collection_name]
+    rno = int(input("Enter the Roll Number  : "))
+    document = collection.find_one({"Rno" : rno})
 
 
-        
+
+    filter_criteria = {"Rno" : rno}
+    print("document : ", document)
+    keys = document.keys()
+    for key in keys:
+        default_value = document[key]
+        custom_message = f"Enter a value (or press Enter to use the default '{default_value}') : "
+        user_input = input(custom_message) or default_value
+
+        update_data = {"$set": {key: user_input}}
+        update_result = collection.update_one(filter_criteria, update_data)
+
+
+    print("Updated Successfully")
+    print()
+
+
+# def push_data():
+#     collection_name = input("Enter the Collection name : ")
+#     collection = db[collection_name]
+
+#     rno = int(input("Enter the Roll Number  : "))
+#     key = input("Enter the Key name  : ")
+#     value = input("Enter the value : ") 
+
+#     filter_criteria = {"Rno": rno}
+#     update_data = {"$push": {key : value}}
+#     collection.update_one(filter_criteria, update_data)
+#     print("Updated Successfully")
+#     print()
+
+def delete_data():
+    collection_name = input("Enter the Collection name : ")
+    collection = db[collection_name]
+
+    rno = int(input("Enter the Roll Number  : "))
+
+    collection.delete_one({"Rno" : rno})
+    print("Deleted Successfully")
+
+
+def collection_data():
+    collection_name = input("Enter the Collection name : ")
+    collection = db[collection_name]
+    
+    documents = collection.find()
+    for document in documents:
+        print(document)
